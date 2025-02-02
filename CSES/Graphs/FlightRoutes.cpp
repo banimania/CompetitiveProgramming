@@ -178,20 +178,20 @@ void solve() {
 
   while (!pq.empty()) {
     State current = pq.top();
-		pq.pop();
-		if (current.cost > bestDist[current.city].top()) continue;
-		for (auto [neighbour, cost] : adj[current.city]) {
-			ll newCost = current.cost + cost;
-			if (bestDist[neighbour].size() < k) {
-				bestDist[neighbour].push(newCost);
-				pq.push({neighbour, newCost});
-			} else if (newCost < bestDist[neighbour].top()) {
+    pq.pop();
+    if (current.cost > bestDist[current.city].top()) continue;
+    for (auto [neighbour, cost] : adj[current.city]) {
+      ll newCost = current.cost + cost;
+      if (bestDist[neighbour].size() < k) {
+        bestDist[neighbour].push(newCost);
+        pq.push({neighbour, newCost});
+      } else if (newCost < bestDist[neighbour].top()) {
         bestDist[neighbour].pop();
         bestDist[neighbour].push(newCost);
-				pq.push({neighbour, newCost});
-			}
-		}
-	}
+        pq.push({neighbour, newCost});
+      }
+    }
+  }
 
 
   vector<ll> ans;
