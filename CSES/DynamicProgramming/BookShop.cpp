@@ -150,27 +150,26 @@ struct MinOp {
 
 #define TESTCASES 0
 
-// TODO: fixear
-ll maxPages(ll i, ll j, vector<ll> &pages, vector<ll> &prices, vector<vector<ll>> &dp) {
+int maxPages(int i, int j, vector<int> &pages, vector<int> &prices, vector<vector<int>> &dp) {
   if (i <= 0 || j <= 0) return 0;
   if (dp[i][j] != -1) return dp[i][j];
 
-  return dp[i][j] = max({
+  return dp[i][j] = max(
     (j >= prices[i - 1] ? pages[i - 1] + maxPages(i - 1, j - prices[i - 1], pages, prices, dp) : 0), // we take the book
     maxPages(i - 1, j, pages, prices, dp) // we don't take the book
-  });
+  );
 }
 
 void solve() {
-  ll n, x;
+  int n, x;
   cin >> n >> x;
 
-  vector<ll> pages(n), prices(n);
+  vector<int> pages(n), prices(n);
   
-  for (int i = 0; i < n; i++) cin >> pages[i];
   for (int i = 0; i < n; i++) cin >> prices[i];
+  for (int i = 0; i < n; i++) cin >> pages[i];
   
-  vector<vector<ll>> dp(n + 1, vector<ll>(x + 1, -1));
+  vector<vector<int>> dp(n + 1, vector<int>(x + 1, -1));
 
   cout << maxPages(n, x, pages, prices, dp) << endl;
 }
