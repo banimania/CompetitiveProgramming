@@ -1,13 +1,9 @@
-// https://cses.fi/problemset/task/1158
-
 #include <bits/stdc++.h>
 using namespace std;
 
 typedef long long ll;
 typedef vector<ll> vll;
 typedef vector<int> vint;
-typedef pair<ll, ll> pll;
-typedef pair<int, int> pii;
 
 #define REP(i, a, b) for (int i = a; i < b; i++)
 #define REPV(i, a, b) for (int i = a; i >= b; i--)
@@ -148,29 +144,22 @@ struct MinOp {
   }
 };
 
-#define TESTCASES 0
+#define TESTCASES 1
 
 void solve() {
-  int n, x;
-  cin >> n >> x;
+  int n;
+  cin >> n;
+  string s;
+  cin >> s;
 
-  vector<int> pages(n), prices(n);
-  
-  for (int i = 0; i < n; i++) cin >> prices[i];
-  for (int i = 0; i < n; i++) cin >> pages[i];
-  
-  vector<vector<int>> dp(n + 1, vector<int>(x + 1));
-  for (int i = 1; i <= n; i++) {
-    for (int j = 0; j <= x; j++) {
-      dp[i][j] = dp[i - 1][j];
-      
-      if (j >= prices[i - 1]) {
-        dp[i][j] = max(dp[i][j], pages[i - 1] + dp[i - 1][j - prices[i - 1]]);
-      }
-    }
+  int maxCoins = 0;
+
+  REP (i, 1, n) {
+    if (s[i] == '@') maxCoins++;
+    if (s[i] == s[i - 1] && s[i] == '*') break;
   }
 
-  cout << dp[n][x] << endl;
+  cout << maxCoins << endl;
 }
 
 int main() {

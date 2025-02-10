@@ -1,4 +1,4 @@
-// https://cses.fi/problemset/task/1158
+// https://cses.fi/problemset/task/1639
 
 #include <bits/stdc++.h>
 using namespace std;
@@ -150,27 +150,25 @@ struct MinOp {
 
 #define TESTCASES 0
 
+int levDist(int i, int j, string &s1, string &s2, vector<vector<int>> &dp) {
+  if (dp[i][j] != -1) return dp[i][j];
+  if (i == 0 || j == 0) return dp[i][j] = max(i, j);
+
+  return dp[i][j] = min({
+    max(i, j),
+    levDist(i - 1, j - 1, s1, s2, dp) + (s1[i - 1] != s2[j - 1]),
+    levDist(i - 1, j, s1, s2, dp) + 1,
+    levDist(i, j - 1, s1, s2, dp) + 1
+  });
+}
+
 void solve() {
-  int n, x;
-  cin >> n >> x;
+  string s1, s2;
+  cin >> s1 >> s2;
 
-  vector<int> pages(n), prices(n);
-  
-  for (int i = 0; i < n; i++) cin >> prices[i];
-  for (int i = 0; i < n; i++) cin >> pages[i];
-  
-  vector<vector<int>> dp(n + 1, vector<int>(x + 1));
-  for (int i = 1; i <= n; i++) {
-    for (int j = 0; j <= x; j++) {
-      dp[i][j] = dp[i - 1][j];
-      
-      if (j >= prices[i - 1]) {
-        dp[i][j] = max(dp[i][j], pages[i - 1] + dp[i - 1][j - prices[i - 1]]);
-      }
-    }
-  }
+  vector<vector<int>> dp(s1.size() + 1, vector<int>(s2.size() + 1, -1));
 
-  cout << dp[n][x] << endl;
+  cout << levDist(s1.size(), s2.size(), s1, s2, dp) << endl;
 }
 
 int main() {

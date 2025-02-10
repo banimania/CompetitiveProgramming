@@ -1,13 +1,9 @@
-// https://cses.fi/problemset/task/1158
-
 #include <bits/stdc++.h>
 using namespace std;
 
 typedef long long ll;
 typedef vector<ll> vll;
 typedef vector<int> vint;
-typedef pair<ll, ll> pll;
-typedef pair<int, int> pii;
 
 #define REP(i, a, b) for (int i = a; i < b; i++)
 #define REPV(i, a, b) for (int i = a; i >= b; i--)
@@ -148,29 +144,52 @@ struct MinOp {
   }
 };
 
-#define TESTCASES 0
+// vector<ll> prefixSum(vector<ll>& a) {
+//   vector<ll> prefixSum(a.size());
+
+//   prefixSum[0] = a[0];
+//   REP (i, 1, a.size()) {
+//     prefixSum[i] = a[i] + prefixSum[i - 1];
+//   }
+
+//   return prefixSum;
+// }
+
+// ll sum(vector<ll>& a) {
+//   ll sum = a[0];
+
+//   REP (i, 1, a.size()) {
+//     sum += a[i];
+//   }
+//   
+//   return sum;
+// }
+
+#define TESTCASES 1
 
 void solve() {
-  int n, x;
-  cin >> n >> x;
+  int nBurros, nSacos;
+  cin >> nBurros >> nSacos;
 
-  vector<int> pages(n), prices(n);
-  
-  for (int i = 0; i < n; i++) cin >> prices[i];
-  for (int i = 0; i < n; i++) cin >> pages[i];
-  
-  vector<vector<int>> dp(n + 1, vector<int>(x + 1));
-  for (int i = 1; i <= n; i++) {
-    for (int j = 0; j <= x; j++) {
-      dp[i][j] = dp[i - 1][j];
-      
-      if (j >= prices[i - 1]) {
-        dp[i][j] = max(dp[i][j], pages[i - 1] + dp[i - 1][j - prices[i - 1]]);
-      }
+  map<int, int> freq;
+  REP (i, 0, nSacos) {
+    int peso;
+    cin >> peso;
+    freq[peso]++;
+  }
+
+  int ans = 0;
+
+  for (pair<int, int> p : freq) {
+    int n = p.first;
+    int f = p.second;
+    if (f >= 2) {
+      ans += f / 2;
+      freq[n] -= 2 * (f / 2);
     }
   }
 
-  cout << dp[n][x] << endl;
+  cout << min(ans, nBurros) << endl;
 }
 
 int main() {

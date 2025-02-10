@@ -1,4 +1,4 @@
-// https://cses.fi/problemset/task/1158
+// https://cses.fi/problemset/task/1744
 
 #include <bits/stdc++.h>
 using namespace std;
@@ -150,27 +150,37 @@ struct MinOp {
 
 #define TESTCASES 0
 
-void solve() {
-  int n, x;
-  cin >> n >> x;
+int minCuts(int a, int b, vector<vector<int>> &dp) {
+  if (dp[a][b] != -1) return dp[a][b];
 
-  vector<int> pages(n), prices(n);
-  
-  for (int i = 0; i < n; i++) cin >> prices[i];
-  for (int i = 0; i < n; i++) cin >> pages[i];
-  
-  vector<vector<int>> dp(n + 1, vector<int>(x + 1));
-  for (int i = 1; i <= n; i++) {
-    for (int j = 0; j <= x; j++) {
-      dp[i][j] = dp[i - 1][j];
-      
-      if (j >= prices[i - 1]) {
-        dp[i][j] = max(dp[i][j], pages[i - 1] + dp[i - 1][j - prices[i - 1]]);
-      }
-    }
+  if (min(a, b) == 1) return dp[a][b] = max(a, b) - 1;
+  if (a == b) return dp[a][b] = 0;
+
+  dp[a][b] = INT_MAX;
+  for (int i = 1; i < a; i++) {
+    int cut1 = i;
+    int cut2 = a - i;
+
+    dp[a][b] = min(dp[a][b], minCuts(cut1, b, dp) + minCuts(cut2, b, dp) + 1);
   }
 
-  cout << dp[n][x] << endl;
+  for (int j = 1; j < b; j++) {
+    int cut1 = j;
+    int cut2 = b - j;
+
+    dp[a][b] = min(dp[a][b], minCuts(a, cut1, dp) + minCuts(a, cut2, dp) + 1);
+  }
+  
+  if (b < dp.size() && a < dp[0].size()) dp[b][a] = dp[a][b];
+  return dp[a][b];
+}
+
+void solve() {
+  int a, b;
+  cin >> a >> b;
+  vector<vector<int>> dp(a + 1, vector<int>(b + 1, -1));
+
+  cout << minCuts(a, b, dp) << endl;
 }
 
 int main() {
