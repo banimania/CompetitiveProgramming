@@ -1,42 +1,42 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int minOps(int i, vector<int> &dp) {
-  if (dp[i] != -1) return dp[i];
-
-  dp[i] = INT_MAX;
-
-  if (i > 0 && minOps(i - 1, dp) != INT_MAX) dp[i] = min(dp[i], minOps(i - 1, dp) + 1); // + 1
-  if (i % 2 == 0 && minOps(i / 2, dp) != INT_MAX) dp[i] = min(dp[i], minOps(i / 2, dp) + 1); // * 2
-  if (i * 3 < dp.size() && minOps(i * 3, dp) != INT_MAX) dp[i] = min(dp[i], minOps(i * 3, dp) + 1); // / 3
-
-  return dp[i];
-}
-
-// int minOps(int i, vector<int> &dp) {
-//   cout << i << endl;
-//   if (dp[i] != INT_MAX) return dp[i];
-
-//   int minusOne = (10000 + ((i - 1) % 10000)) % 10000;
-//   int dividedTwo = (i / 2) % 10000;
-//   int timesThree = (i * 3) % 10000;
-
-//   return dp[i] = min({
-//     minOps(minusOne, dp) + 1,
-//     minOps(dividedTwo, dp) + 1,
-//     minOps(timesThree, dp) + 1
-//   });
-// }
-
-// TODO: arreglar, si lees el enunciado pone que las operaciones se hacen módulo 10k y las divisiones son enteras
-
 int main() {
   int a, b;
   while (cin >> a >> b) {
-    vector<int> dp(10001, -1);
-    dp[a] = 0;
+    if (a == b) {
+      cout << 0 << endl;
+      continue;
+    }
+    queue<int> q;
+    vector<int> bestDist(10000, INT_MAX);
+    bestDist[a] = 0;
+    q.push(a);
+    while (!q.empty()) {
+      int actual = q.front();
+      q.pop();
 
-    cout << minOps(b, dp) << endl;
+      if (actual == b) {
+        break;
+      }
+      int plusOne = (10000 + ((actual + 1) % 10000)) % 10000;
+      int dividedTwo = (actual * 2) % 10000;
+      int timesThree = (actual / 3) % 10000;
+
+      if (bestDist[actual] + 1 < bestDist[plusOne]) {
+        bestDist[plusOne] = bestDist[actual] + 1;
+        q.push(plusOne);
+      }
+      if (bestDist[actual] + 1 < bestDist[dividedTwo]) {
+        bestDist[dividedTwo] = bestDist[actual] + 1;
+        q.push(dividedTwo);
+      }
+      if (bestDist[actual] + 1 < bestDist[timesThree]) {
+        bestDist[timesThree] = bestDist[actual] + 1;
+        q.push(timesThree);
+      }
+    }
+    cout << bestDist[b] << endl;
   }
   return 0;
 }
