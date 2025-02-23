@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// TODO: arreglar
+// TODO: arreglar con movimiento simúltaneo de ambos ratones
 
 int manhattanDist(const pair<int, int> &a, const pair<int, int> &b) {
   return abs(a.first - b.first) + abs(a.second - b.second);
@@ -25,29 +25,39 @@ int main() {
 
     for (int i = 0; i <= n; i++) {
       for (int j = 0; j <= n; j++) {
-        if (dp[i][j] == INT_MAX) continue;
-        int k = max(i, j) + 1;
-        if (k > n) continue;
-        dp[k][j] = min(dp[k][j], dp[i][j] + manhattanDist(buts[i], buts[k]));
-        dp[i][k] = min(dp[i][k], dp[i][j] + manhattanDist(buts[j], buts[k]));
+        if (i == j) continue;
+
+        for (int k = i - 1; k >= 0; k--) {
+          if (max(k, j) + 1 < i) break;
+          if (dp[k][j] != INT_MAX) dp[i][j] = min(dp[i][j], dp[k][j] + manhattanDist(buts[k], buts[i]));
+        }
+
+        for (int k = j - 1; k >= 0; k--) {
+          if (max(i, k) + 1 < j) break;
+          if (dp[i][k] != INT_MAX) dp[i][j] = min(dp[i][j], dp[i][k] + manhattanDist(buts[k], buts[j]));
+        }
       }
     }
+
+    // for (int i = 0; i <= n; i++) {
+    //   for (int j = 0; j <= n; j++) {
+    //     cout << dp[i][j] << " ";
+    //   }
+    //   cout << endl;
+    // }
 
     int ans = INT_MAX;
     pair<int, int> salida = {f - 1, c - 1};
     for (int i = 0; i <= n; i++) {
       ans = min({
         ans,
-        dp[i][n],
-        dp[n][i]
-        // (dp[i][n] != INT_MAX ? dp[i][n] + max(manhattanDist(buts[i], salida), manhattanDist(buts[n], salida)) : INT_MAX),
-        // (dp[n][i] != INT_MAX ? dp[n][i] + max(manhattanDist(buts[i], salida), manhattanDist(buts[n], salida)) : INT_MAX)
+        (dp[i][n] != INT_MAX ? dp[i][n] + max(manhattanDist(buts[i], salida), manhattanDist(buts[n], salida)) : INT_MAX),
+        (dp[n][i] != INT_MAX ? dp[n][i] + max(manhattanDist(buts[i], salida), manhattanDist(buts[n], salida)) : INT_MAX)
       });
     }
 
-    ans += 1;
+    ans++;
     cout << ans << endl;
   }
   return 0;
 }
-
