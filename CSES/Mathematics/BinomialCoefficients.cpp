@@ -283,20 +283,17 @@ struct SumOp {
 #define TESTCASES 0
 
 void solve() {
-  ll n, q;
-  cin >> n >> q;
+  factorial();
+  inverses();
 
-  vll a(n);
-  SCAN(a);
+  int n;
+  cin >> n;
 
-  SegTree<ll, SumOp> segTree(a);
-
-  REP (i, 0, q) {
-    ll a, b;
+  for (int i = 0; i < n; i++) {
+    int a, b;
     cin >> a >> b;
-    a--, b--;
 
-    cout << segTree.query(a, b) << endl;
+    cout << choose(a, b) << endl;
   }
 }
 
