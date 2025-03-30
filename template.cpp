@@ -61,6 +61,19 @@ bool isPrime(T n) {
 }
 
 template<typename T>
+vector<T> factorize(T n) {
+  vector<T> factors;
+  for (T i = 2; i * i <= n; ++i) {
+    while (n % i == 0) {
+      factors.push_back(i);
+      n /= i;
+    }
+  }
+  if (n > 1) factors.push_back(n);
+  return factors;
+}
+
+template<typename T>
 T extendedGCD(T a, T b, T &x, T &y) {
   if (b == 0) {
     x = 1, y = 0;
