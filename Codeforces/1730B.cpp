@@ -22,22 +22,18 @@ void solve() {
   double low = *min_element(x.begin(), x.end());
   double high = *max_element(x.begin(), x.end());
 
-  double dif = DBL_MAX;
-  while (dif >= 1e-8) {
+  while (abs(high - low) > 1e-7) {
     double c1 = (high - low) / 4.0f + low;
     double c3 = 3.0f * (high - low) / 4.0f + low;
 
     double t1 = calcTime(c1, x, t);
     double t3 = calcTime(c3, x, t);
 
-    double prevLow = low, prevHigh = high;
-    if (t1 >= t3) low = c1 + 1e-8;
-    if (t3 >= t1) high = c3 - 1e-8;
-
-    dif = abs(low - prevLow) + abs(high - prevHigh);
+    if (t1 >= t3) low = c1;
+    if (t3 >= t1) high = c3;
   }
 
-  cout << high << endl;
+  cout << setprecision(20) << fixed << high << endl;
 }
 
 int main() {
