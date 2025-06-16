@@ -16,7 +16,7 @@ int main() {
 
     vector<vector<int>> linea(m);
     vector<vector<pair<int, int>>> times(n, vector<pair<int, int>>(m, {-1, -1}));
-    unordered_map<int, set<int>> lineaNodo;
+    unordered_map<int, unordered_set<int>> lineaNodo;
     cin.ignore();
     for (int i = 0; i < m; i++) {
       int currentTime = 0;
