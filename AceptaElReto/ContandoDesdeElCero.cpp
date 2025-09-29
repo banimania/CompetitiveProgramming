@@ -1,16 +1,20 @@
 #include <bits/stdc++.h>
 using namespace std;
-typedef long long ll;
 
 int main() {
   int t;
   cin >> t;
 
   while (t--) {
-    ll n, m;
-    cin >> n >> m;
+    int x;
+    cin >> x;
 
-    cout << (n + m + 1) * (n + m + 2) / 2 - m << endl;
+    if (x > 0) {
+      x--;
+    }
+
+    cout << x << endl;
   }
+
   return 0;
 }
