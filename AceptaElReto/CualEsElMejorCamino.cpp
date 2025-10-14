@@ -6,6 +6,9 @@ struct State {
 };
 
 int main() {
+  cin.tie(0);
+  ios::sync_with_stdio(0);
+  
   int n, c;
   while (cin >> n >> c) {
     vector<vector<pair<int, int>>> adj(n);
@@ -22,65 +25,63 @@ int main() {
     cin >> k;
 
     for (int i = 0; i < k; i++) {
-      int start, end;
-      cin >> start >> end;
-      start--, end--;
+      int a, b;
+      cin >> a >> b;
+      a--, b--;
 
-      vector<int> minCalles(n, INT_MAX), minDist(n, INT_MAX);
-      minCalles[start] = 0, minDist[start] = 0;
-
-      int nCalles = INT_MAX;
-
-      queue<int> q;
-      q.push(start);
+      int minCalles = 0;
+      queue<State> q;
+      vector<bool> visited(n);
+      q.push({a, 0, 0});
       while (!q.empty()) {
-        int curr = q.front();
+        State curr = q.front();
         q.pop();
 
-        if (curr == end) {
+        if (curr.pos == b) {
+          minCalles = curr.calles;
           break;
         }
 
-        for (pair<int, int> neighbourStreet : adj[curr]) {
-          int neighbour = neighbourStreet.first;
-          if (minCalles[neighbour] > minCalles[curr] + 1) {
-            minCalles[neighbour] = minCalles[curr] + 1;
-            q.push(neighbour);
+        for (const pair<int, int> &p : adj[curr.pos]) {
+          if (!visited[p.first]) {
+            visited[p.first] = true;
+            q.push({p.first, curr.dist + p.second, curr.calles + 1});
           }
         }
       }
 
-      priority_queue<State, vector<State>, function<bool(State, State)>> pq([](const State &a, const State &b) {
+      priority_queue<State, vector<State>, function<bool(const State&, const State&)>> pq([](const State &a, const State &b) {
         if (a.dist == b.dist) return a.calles > b.calles;
         return a.dist > b.dist;
       });
-      pq.push({start, 0, 0});
+
+      vector<int> best(n, INT_MAX);
+      best[a] = 0;
+      pq.push({a, 0, 0});
+      int minCallesD = INT_MAX;
       while (!pq.empty()) {
         State curr = pq.top();
         pq.pop();
 
-        if (curr.pos == end && curr.dist == minDist[end]) {
-          nCalles = min(nCalles, curr.calles);
-          break;
+        if (best[b] == curr.dist && curr.pos == b) {
+          minCallesD = min(minCallesD, curr.calles);
         }
 
-        for (pair<int, int> neighbourStreet : adj[curr.pos]) {
-          int neighbour = neighbourStreet.first;
-          int cost = neighbourStreet.second;
-
-          if (minDist[neighbour] > curr.dist + cost) {
-            minDist[neighbour] = curr.dist + cost;
-            pq.push({neighbour, curr.dist + cost, curr.calles + 1});
+        for (const pair<int, int> &p : adj[curr.pos]) {
+          if (best[p.first] >= curr.dist + p.second) {
+            best[p.first] = curr.dist + p.second;
+            pq.push({p.first, curr.dist + p.second, curr.calles + 1});
           }
         }
       }
 
-      if (minCalles[end] == INT_MAX || minDist[end] == INT_MAX) {
+      if (best[b] == INT_MAX) {
         cout << "SIN CAMINO" << endl;
       } else {
-        cout << minDist[end] << " " << (minCalles[end] == nCalles ? "SI" : "NO") << endl;
+        cout << best[b] << " " << (minCallesD == minCalles ? "SI" : "NO") << endl;
       }
     }
+
     cout << "----" << endl;
   }
   return 0;

@@ -1,112 +1,68 @@
-// TODO: arreglar
-
 #include <bits/stdc++.h>
 using namespace std;
 
-template<typename T>
-void make_set(vector<T> &dsu, T v) {
-  dsu[v] = v;
-}
+void dfs(int pos, vector<bool> &visited, vector<vector<int>> &adj, int &f, int &s, bool flag) {
+  if (flag) f++;
+  else s++;
 
-template<typename T>
-int find_set(vector<T> &dsu, T v) {
-  if (v == dsu[v]) return v;
-  return find_set(dsu, dsu[v]);
-}
-
-template<typename T>
-void union_sets(vector<T> &dsu, T a, T b) {
-  a = find_set(dsu, a);
-  b = find_set(dsu, b);
-  if (a != b) dsu[b] = a;
+  visited[pos] = true;
+  for (int neighbour : adj[pos]) {
+    if (!visited[neighbour]) {
+      dfs(neighbour, visited, adj, f, s, !flag);
+    }
+  }
 }
 
 int main() {
+  cin.tie(0);
+  ios::sync_with_stdio(0);
+
   int n, p, a;
   while (cin >> n >> p >> a) {
-    vector<int> dsu(n);
-    for (int i = 0; i < n; i++) {
-      make_set(dsu, i);
-    }
-
-    map<int, int> enemy;
+    vector<bool> visited(n, false);
+    vector<vector<int>> adj(n);
     for (int i = 0; i < p; i++) {
-      int a, b;
-      cin >> a >> b;
-      a--, b--;
+      int u, v;
+      cin >> u >> v;
+      u--, v--;
 
-      if (!enemy.count(a)) {
-        enemy[a] = b;
-      }
-
-      if (!enemy.count(b)) {
-        enemy[b] = a;
-      }
-
-      if (a != enemy[b]) {
-        union_sets(dsu, enemy[b], a);
-      }
-      if (b != enemy[a]) {
-        union_sets(dsu, enemy[a], b);
-      }
-
+      adj[u].push_back(v);
+      adj[v].push_back(u);
     }
 
-    map<int, int> sizes;
+    vector<pair<int, int>> groups;
     for (int i = 0; i < n; i++) {
-      sizes[find_set(dsu, i)]++;
-    }
-
-    vector<int> a1, a2;
-
-    set<int> used;
-    for (pair<int, int> size : sizes) {
-      int group = size.first;
-      int groupSize = size.second;
-
-      if (!enemy.count(group)) {
-        a1.push_back(groupSize);
-        a2.push_back(groupSize);
-        continue;
+      if (!visited[i]) {
+        int f = 0;
+        int s = 0;
+        dfs(i, visited, adj, f, s, false);
+        groups.push_back({f, s});
       }
-
-      int enemyGroup = enemy[size.first];
-      int enemyGroupSize = sizes[enemyGroup];
-
-      if (used.count(group) || used.count(enemyGroup)) continue;
-
-      used.insert(group);
-      used.insert(enemyGroup);
-
-      a1.push_back(groupSize);
-      a2.push_back(enemyGroupSize);
-
     }
 
-    int maxSum = 0;
+    vector<vector<int>> dp(groups.size() + 1, vector<int>(a + 1));
+    int ans = -1;
 
-    vector<vector<bool>> dp(a + 1, vector<bool>(a1.size() + 1, false));
+    for (int i = 1; i <= groups.size(); i++) {
+      for (int j = 0; j <= a; j++) {
+        // no hacer nada
+        dp[i][j] = max(dp[i][j], dp[i - 1][j]);
 
-    dp[0][0] = true;
-
-    for (int j = 1; j <= a1.size(); j++) {
-      for (int i = a; i >= 0; i--) {
-        if (dp[i][j - 1]) {
-          dp[i][j] = true;
-          if (i + a1[j - 1] <= a) dp[i + a1[j - 1]][j] = true;
-          if (i + a2[j - 1] <= a) dp[i + a2[j - 1]][j] = true;
+        // el primero
+        if (j >= groups[i - 1].first) {
+          dp[i][j] = max(dp[i][j], dp[i - 1][j - groups[i - 1].first] + groups[i - 1].first);
         }
+
+        // el segundo 
+        if (j >= groups[i - 1].second) {
+          dp[i][j] = max(dp[i][j], dp[i - 1][j - groups[i - 1].second] + groups[i - 1].second);
+        }
+
+        ans = max(ans, dp[i][j]);
       }
     }
 
-    for (int i = a; i >= 0; i--) {
-      if (dp[i][a1.size()]) {
-        maxSum = i;
-        break;
-      }
-    }
-
-    cout << maxSum << endl;
+    cout << ans << '\n';
   }
   return 0;
 }

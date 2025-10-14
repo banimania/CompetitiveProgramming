@@ -1,45 +1,91 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int main() {
-  map<char, double> ventas = {{'D', 0}, {'A', 0}, {'M', 0}, {'I', 0}, {'C', 0}};
-  map<char, string> nombres = {{'D', "DESAYUNOS"}, {'A', "COMIDAS"}, {'M', "MERIENDAS"}, {'I', "CENAS"}, {'C', "COPAS"}};
-  char x;
-  double v;
-  while (cin >> x >> v) {
-    if (x == 'N') {
-      string maxVentas = "EMPATE", minVentas = "EMPATE";
-      double maxVentasV = -1, minVentasV = DBL_MAX;
+unordered_map<char, string> catName = {
+  {'D', "DESAYUNOS"},
+  {'A', "COMIDAS"},
+  {'M', "MERIENDAS"},
+  {'I', "CENAS"},
+  {'C', "COPAS"},
+};
 
-      double media = 0.0f;
-      int cats = 0;
-      for (pair<char, double> venta : ventas) {
-        media += venta.second;
-        if (venta.second > 0.0f) cats++;
-
-        if (venta.second > maxVentasV) {
-          maxVentasV = venta.second;
-          maxVentas = nombres[venta.first];
-        } else if (venta.second == maxVentasV) {
-          maxVentas = "EMPATE";
-        }
-        
-        if (venta.second < minVentasV) {
-          minVentasV = venta.second;
-          minVentas = nombres[venta.first];
-        } else if (venta.second == minVentasV) {
-          minVentas = "EMPATE";
-        }
-      }
-
-      if (cats > 0) media /= cats;
-
-      cout << maxVentas << "#" << minVentas << "#" << (ventas['A'] > media ? "SI" : "NO") << endl;
-
-      ventas = {{'D', 0}, {'A', 0}, {'M', 0}, {'I', 0}, {'C', 0}};
-    } else {
-      ventas[x] += v;
+string catMax(unordered_map<char, double> &beneficios) {
+  string ans = "EMPATE";
+  double cMax = DBL_MIN;
+  bool empate = true;
+  for (const pair<char, double> &p : beneficios) {
+    if (p.second > cMax) {
+      cMax = p.second;
+      ans = catName[p.first];
+      empate = false;
+    } else if (p.second == cMax) {
+      empate = true;
     }
+  }
+
+  return (empate ? "EMPATE" : ans);
+}
+
+string catMin(unordered_map<char, double> &beneficios) {
+  string ans = "EMPATE";
+  double cMin = DBL_MAX;
+  bool empate = true;
+  for (const pair<char, double> &p : beneficios) {
+    if (p.second < cMin) {
+      cMin = p.second;
+      ans = catName[p.first];
+      empate = false;
+    } else if (p.second == cMin) {
+      empate = true;
+    }
+  }
+
+  return (empate ? "EMPATE" : ans);
+}
+
+int main() {
+  char c;
+  double v;
+
+  unordered_map<char, double> beneficios = {
+    {'D', 0},
+    {'A', 0}, 
+    {'M', 0},
+    {'I', 0},
+    {'C', 0},
+  };
+  double nvA = 0;
+  double nv = 0;
+  double totalComidas = 0;
+  double total = 0;
+  while (cin >> c >> v) {
+    if (c == 'N' && v == 0) {
+      double mediaDia = (nv > 0 ? total / nv : 0);
+      double mediaComidas = (nvA > 0 ? totalComidas / nvA : 0);
+
+      cout << catMax(beneficios) << "#" << catMin(beneficios) << "#" << (mediaComidas > mediaDia ? "SI" : "NO") << '\n';
+      beneficios = {
+        {'D', 0},
+        {'A', 0}, 
+        {'M', 0},
+        {'I', 0},
+        {'C', 0},
+      };
+
+      nv = 0;
+      nvA = 0;
+      total = 0;
+      totalComidas = 0;
+      continue;
+    }
+
+    beneficios[c] += v;
+    if (c == 'A') {
+      nvA++;
+      totalComidas += v;
+    }
+    nv++;
+    total += v;
   }
   return 0;
 }

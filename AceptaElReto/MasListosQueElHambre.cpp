@@ -1,63 +1,64 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// TODO: arreglar con movimiento simúltaneo de ambos ratones
+struct State {
+  int r1, r2, delay;
+  bool operator==(const State &o) const {
+    return r1 == o.r1 && r2 == o.r2 && delay == o.delay;
+  }
+};
 
-int manhattanDist(const pair<int, int> &a, const pair<int, int> &b) {
-  return abs(a.first - b.first) + abs(a.second - b.second);
+struct Hash {
+  size_t operator()(const State &s) const noexcept {
+    return ((s.r1 * 131 + s.r2) * 131 + s.delay);
+  }
+};
+
+int solve(int r1, int r2, int delay, const int n, const vector<pair<int, int>> &buts, const vector<vector<int>> &dist, unordered_map<State, int, Hash> &dp) {
+  if (r1 == n + 1) return max(delay, dist[r2][n + 1]);
+
+  State s = {r1, r2, delay};
+  if (dp.count(s)) return dp[s];
+
+  int d_next = dist[r1][r1 + 1];
+  int wait = max(dist[r2][r1 + 1] - delay, 0);
+
+  return dp[s] = min(
+    solve(r1 + 1, r2, delay + d_next, n, buts, dist, dp),
+    delay + solve(r1 + 1, r1, wait, n, buts, dist, dp)
+  );
 }
 
 int main() {
-  int f, c;
-  while (cin >> f >> c) {
-    int n;
-    cin >> n;
+  ios::sync_with_stdio(false);
+  cin.tie(nullptr);
 
-    vector<pair<int, int>> buts(n + 1);
-    buts[0] = {0, 0};
+  int f, c, n;
+  while (cin >> f >> c) {
+    cin >> n;
+    unordered_map<State, int, Hash> dp;
+    vector<pair<int, int>> buts = vector<pair<int, int>>(n + 2, {0, 0});
+    buts[0] = {1, 1};
     for (int i = 1; i <= n; i++) {
       cin >> buts[i].first >> buts[i].second;
-      buts[i].first--, buts[i].second--;
     }
+    buts[n + 1] = {f, c};
 
-    vector<vector<int>> dp(n + 1, vector<int>(n + 1, INT_MAX));
-    dp[0][0] = 0;
-
-    for (int i = 0; i <= n; i++) {
-      for (int j = 0; j <= n; j++) {
-        if (i == j) continue;
-
-        for (int k = i - 1; k >= 0; k--) {
-          if (max(k, j) + 1 < i) break;
-          if (dp[k][j] != INT_MAX) dp[i][j] = min(dp[i][j], dp[k][j] + manhattanDist(buts[k], buts[i]));
-        }
-
-        for (int k = j - 1; k >= 0; k--) {
-          if (max(i, k) + 1 < j) break;
-          if (dp[i][k] != INT_MAX) dp[i][j] = min(dp[i][j], dp[i][k] + manhattanDist(buts[k], buts[j]));
-        }
+    vector<vector<int>> dist(n + 2, vector<int>(n + 2));
+    for (int i = 0; i <= n + 1; i++) {
+      for (int j = i; j <= n + 1; j++) {
+        dist[i][j] = abs(buts[i].first - buts[j].first) + abs(buts[i].second - buts[j].second);
+        dist[j][i] = dist[i][j];
       }
     }
 
-    // for (int i = 0; i <= n; i++) {
-    //   for (int j = 0; j <= n; j++) {
-    //     cout << dp[i][j] << " ";
-    //   }
-    //   cout << endl;
-    // }
-
-    int ans = INT_MAX;
-    pair<int, int> salida = {f - 1, c - 1};
-    for (int i = 0; i <= n; i++) {
-      ans = min({
-        ans,
-        (dp[i][n] != INT_MAX ? dp[i][n] + max(manhattanDist(buts[i], salida), manhattanDist(buts[n], salida)) : INT_MAX),
-        (dp[n][i] != INT_MAX ? dp[n][i] + max(manhattanDist(buts[i], salida), manhattanDist(buts[n], salida)) : INT_MAX)
-      });
+    if (n == 0) {
+      cout << dist[0][1] + 1 << endl;
+      continue;
     }
 
-    ans++;
-    cout << ans << endl;
+    cout << solve(1, 0, dist[0][1], n, buts, dist, dp) + 1 << endl;
   }
+
   return 0;
 }
