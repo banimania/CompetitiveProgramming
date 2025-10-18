@@ -7,32 +7,65 @@ int main() {
 
   string line;
   while (getline(cin, line)) {
+    line += "+";
+
     int i = 0;
+    string ans = "";
 
-    while (i <= line.size()) {
-      
+    string coef = "";
+    string grado = "";
+    bool readCoef = true;
 
+    bool ti = true;
 
+    for (int i = 0; i < line.size(); i++) {
+      if (isdigit(line[i])) {
+        if (readCoef) {
+          coef += line[i];
+        } else {
+          grado += line[i];
+        }
+      } else {
+        if (line[i] == 'x') {
+          ti = false;
+        } else if (line[i] == '^') {
+          readCoef = false;
+        } else if (line[i] == '+') {
+          if (ti) {
 
+            if (ans.empty()) ans = "0";
+            ti = true;
+            readCoef = true;
 
+            coef = "";
+            grado = "";
+            continue;
+          }
+          if (!ans.empty()) ans += "+";
 
+          int coefInt = coef.empty() ? 1 : stoi(coef);
+          int gradoInt = grado.empty() ? 1 : stoi(grado);
 
+          int newGrado = gradoInt - 1;
+          int newCoef = gradoInt * coefInt;
 
-
-
-
-
-
-      // GREEDY = main -> doble(inc 3) -> doble(3 + 1) -> doble(4) -> 4 + 4 -> 8
-      // LAZY = main -> doble(inc 3) -> inc 3 + inc 3 -> 3 + 1 + inc 3 -> 4 + inc 3 -> 4 + 3 + 1 -> 7 + 1 -> 8
-
-
-
-
-
-
-
+          ans += to_string(newCoef);
+          if (newGrado > 0) {
+            ans += "x";
+          }
+          if (newGrado > 1) {
+            ans += "^";
+            ans += to_string(newGrado);
+          }
+          ti = true;
+          readCoef = true;
+          coef = "";
+          grado = "";
+        }
+      }
     }
+
+    cout << ans << endl;
   }
   return 0;
 }
