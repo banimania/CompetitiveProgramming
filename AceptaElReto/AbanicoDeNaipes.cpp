@@ -1,4 +1,3 @@
-// TODO: Fix
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -9,24 +8,27 @@ int main() {
   int n;
   while (cin >> n && n) {
     vector<int> v(n);
-    for (int i = 0; i < n; i++) cin >> v[i];
+    int minValue = v[0], minPos = 0;
+    for (int i = 0; i < n; i++) {
+      cin >> v[i];
+      if (minValue > v[i]) {
+        minValue = v[i];
+        minPos = i;
+      }
+    }
 
     vector<int> sorted(v.begin(), v.end());
     sort(sorted.begin(), sorted.end());
 
-    int maxLCIS = 0;
-
-    int curr = (sorted[0] == v[0]);
-    for (int i = 1; i < n; i++) {
-      if (v[i] == sorted[i]) {
-        curr++;
-      } else {
-        curr = 1;
+    int o = 0;
+    int target = 0;
+    for (int i = minPos; i < n; i++) {
+      if (sorted[target] == v[i]) {
+        target++;
+        o++;
       }
-
-      maxLCIS = max(maxLCIS, curr);
     }
 
-    cout << n - maxLCIS << "\n";
+    cout << n - o << "\n";
   }
 }
