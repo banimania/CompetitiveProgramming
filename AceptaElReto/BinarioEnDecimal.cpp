@@ -4,6 +4,9 @@ using namespace std;
 static const int MAXN = 10000;
 
 int main() {
+  cin.tie(0);
+  ios::sync_with_stdio(0);
+
   vector<int> dp(MAXN + 1, INT_MAX);
   dp[0] = 0; dp[1] = 0; dp[10] = 0; dp[11] = 0; dp[100] = 0; dp[101] = 0; dp[110] = 0; dp[111] = 0; dp[1000] = 0; dp[1001] = 0; dp[1010] = 0; dp[1011] = 0; dp[1100] = 0; dp[1101] = 0; dp[1110] = 0; dp[1111] = 0; dp[10000] = 0;
 
