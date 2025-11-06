@@ -1,29 +1,28 @@
 #include <bits/stdc++.h>
+#include <cmath>
 using namespace std;
 
 typedef long long ll;
 
 int main() {
-  int w, h, p1, p2;
+  cin.tie(0);
+  ios::sync_with_stdio(0);
+
+  double w, h, p1, p2;
   while (cin >> w >> h >> p1 >> p2) {
-    int aux = min(w, h);
-    w = max(w, h);
-    h = aux;
+    double a = max(w, h);
+    double b = min(w, h);
 
-    if (h > p1 || h > p2) {
-      cout << "NO" << endl;
-      continue;
-    }
-    
-    double d = sqrt(pow(w - p2, 2) + pow(h, 2));
-    cout << d << endl;
+    double Pg = max(p1, p2);
+    double Pp = min(p1, p2);
 
-    if (d > p1 || d > p2) {
-      cout << "NO" << endl;
-      continue;
-    }
+    double x1 = sqrt(Pp * Pp - b * b);
+    double x2 = sqrt(Pg * Pg - b * b);
 
-    cout << "YES" << endl;
+    bool ans = x1 + x2 >= a;
+
+    cout << (ans ? "SI" : "NO") << "\n";
   }
+
   return 0;
 }
