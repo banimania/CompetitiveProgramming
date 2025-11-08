@@ -11,12 +11,9 @@ int main() {
     ll ans = 0;
     ll suma = 0;
     vector<int> a(n);
-    for (int i = 0; i < n; i++) {
-      cin >> a[i];
-    }
-
     int st = 0;
     for (int i = 0; i < n; i++) {
+      cin >> a[i];
       suma += a[i];
 
       while (i - st + 1 > k) {
@@ -25,6 +22,7 @@ int main() {
       }
       ans = max(ans, suma);
     }
+
     cout << ans << "\n";
   }
   return 0;

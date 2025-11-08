@@ -2,12 +2,12 @@
 using namespace std;
 typedef long long ll;
 
-bool works(ll t, ll k, vector<pair<char, int>> &v) {
-  ll veces = 0;
-  ll tamE = 2 * t;
-  ll tamR = t;
+bool works(int t, int k, vector<pair<char, int>> &v) {
+  int veces = 0;
+  int tamE = 2 * t;
+  int tamR = t;
 
-  ll e = 0, r = 0;
+  int e = 0, r = 0;
   for (int i = 0; i < v.size(); i++) {
     if (v[i].first == 'E') {
       if (v[i].second > tamE) return false;
@@ -47,12 +47,12 @@ int main() {
       cin >> v[i].second>> v[i].first;
     }
 
-    ll low = 1;
-    ll high = 3 * 1e9;
+    int low = 1;
+    int high = 2 * 1e9 + 5;
 
-    ll ans = high;
+    int ans = high;
     while (high >= low) {
-      ll mid = (high - low) / 2 + low;
+      int mid = (high - low) / 2 + low;
 
       if (works(mid, k, v)) {
         high = mid - 1;
