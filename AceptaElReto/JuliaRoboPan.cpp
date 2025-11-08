@@ -55,7 +55,7 @@ int main() {
       }
     }
 
-    set<int> seen;
+    unordered_set<int> seen;
     int ans = 0;
 
     for (int i = 0; i < n; i++) {
