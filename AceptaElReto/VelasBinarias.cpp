@@ -3,36 +3,46 @@ using namespace std;
 
 typedef long long ll;
 
+string decToBin(ll n) {
+  string ans = "";
+
+  while (n > 0) {
+    ans += (n % 2 == 0 ? '0' : '1');
+    n /= 2;
+  }
+
+  reverse(ans.begin(), ans.end());
+  return ans;
+}
+
 int main() {
+  cin.tie(0);
+  ios::sync_with_stdio(0);
+
   ll n;
   while (cin >> n && n) {
-    string s;
-    while (n > 0) {
-      s.push_back((n % 2) + '0');
-      n /= 2;
-    }
+    string bin = decToBin(n);
 
-    int first = 0, last = n - 1;
-    for (int i = 0; i < s.size(); i++) {
-      if (s[i] == '1') break;
-      first++;
-    }
-    for (int i = s.size() - 1; i >= 0; i--) {
-      if (s[i] == '1') break;
-      last--;
-    }
-
-    s = s.substr(first, last - first);
-
-    bool palindromo = true;
-    for (int i = 0; i < s.size(); i++) {
-      if (s[i] != s[s.size() - i - 1]) {
-        palindromo = false;
+    int lastOne = 0;
+    for (int i = bin.size() - 1; i >= 0; i--) {
+      if (bin[i] == '1') {
+        lastOne = i;
         break;
       }
     }
 
-    cout << (palindromo ? "SI" : "NO") << endl;
+    string aux = bin.substr(0, lastOne + 1);
+
+    bool ans = true;
+    for (int i = 0; i < aux.size(); i++) {
+      if (aux[i] != aux[aux.size() - 1 - i]) {
+        ans = false;
+        break;
+      }
+
+    }
+    cout << (ans ? "SI\n" : "NO\n");
   }
+
   return 0;
 }
